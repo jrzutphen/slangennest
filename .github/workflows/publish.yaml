@@ -35,7 +35,7 @@ jobs:
         python-version: 3
 
     - name: Set-up Poetry
-      uses: abatilo/actions-poetry@v2
+      uses: abatilo/actions-poetry@v3
 
     - name: Configure Python cache
       uses: actions/cache@v4
