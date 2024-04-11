@@ -1,0 +1,66 @@
+name: Get latest Material for MkDocs Insiders version
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+env:
+  VERSION_FILE: version/mkdocs-material-insiders.txt
+  # The version already includes the 'insiders' suffix
+  DOWNLOAD_PREFIX: download/mkdocs-material
+
+jobs:
+  get-latest-version:
+    environment: production
+    runs-on: ubuntu-latest
+    if: github.event.repository.fork == false
+    steps:
+    - uses: actions/checkout@v4
+    - name: Fetch latest release version
+      env:
+        GH_TOKEN: ${{ secrets.MKDOCS_TOKEN }}
+      id: fetch-latest
+      shell: bash
+      run: |
+        gh release view --repo "squidfunk/mkdocs-material-insiders" --json "tagName" --jq ".tagName" > ${{ env.VERSION_FILE }}
+        echo "version=$(cat ${{ env.VERSION_FILE }})" >> $GITHUB_OUTPUT
+    - name: Check for modified files
+      id: check
+      shell: bash
+      run: |
+        echo "modified=$(if [ -n "$(git status --porcelain)" ]; then echo "true"; else echo "false"; fi)" >> $GITHUB_OUTPUT
+    - name: Commit and push changes
+      if: steps.check.outputs.modified == 'true'
+      run: |
+        git config user.name "${{ github.actor }}"
+        git config user.email "${{ github.actor }}@users.noreply.github.com"
+        git add ${{ env.VERSION_FILE }}
+        git commit --message "⬆️ Update Material for MkDocs Insiders to ${{ steps.fetch-latest.outputs.version }}"
+        git push
+    outputs:
+      version: ${{ steps.fetch-latest.outputs.version }}
+      is_new: ${{ steps.check.outputs.modified }}
+  upload-latest-version:
+    runs-on: ubuntu-latest
+    needs: get-latest-version
+    if: needs.get-latest-version.outputs.is_new == 'true'
+    steps:
+    - name: Download latest version
+      id: download
+      env:
+        GH_TOKEN: ${{ secrets.MKDOCS_TOKEN }}
+        OUTPUT_FILE: ${{ env.DOWNLOAD_PREFIX }}-${{ steps.fetch-latest.outputs.version }}.tar.gz
+      shell: bash
+      run: |
+        echo "file=${{ env.OUTPUT_FILE }}" >> $GITHUB_OUTPUT
+        gh release download --repo "squidfunk/mkdocs-material-insiders" --archive "tar.gz" --output "${{ env.DOWNLOAD_PREFIX }}-${{ steps.fetch-latest.outputs.version }}.tar.gz"
+    - name: Upload latest version using SCP
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ vars.SCP_HOST }}
+        username: ${{ vars.SCP_USER }}
+        password: ${{ secrets.SCP_PASSWORD }}
+        port: ${{ vars.SCP_PORT }}
+        source: ${{ steps.download.outputs.file }}
+        target: ${{ vars.SCP_TARGET }}

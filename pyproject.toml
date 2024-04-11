@@ -1,0 +1,17 @@
+#:schema https://json.schemastore.org/pyproject
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+package-mode = false
+packages = [{ include = "package_list_builder", from = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+webdavclient3 = "^3.14.6"
+pwinput = "^1.0.3"
+
+[tool.poetry.group.dev.dependencies]
+dumb-pypi = "^1.15.0"

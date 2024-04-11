@@ -1,0 +1,51 @@
+version: 3
+
+env:
+  # Necessary till Python 3.15 (https://peps.python.org/pep-0686)
+  PYTHONUTF8: 1
+
+dotenv:
+- .env
+
+tasks:
+  install:
+    desc: Install dependencies
+    preconditions:
+    - msg: "Poetry is not installed"
+      cmd: poetry --version
+    cmds:
+    - cmd: poetry install
+
+  compile:
+    desc: Compile code
+    deps:
+    - install
+    env:
+      PROJECTS: "package_list_builder"
+    cmds:
+    - cmd: poetry run python src/compile.py $PROJECTS
+
+  build:
+    desc: Build site
+    requires:
+      vars:
+      - WEBDAV_URL
+      - WEBDAV_USER
+      - WEBDAV_PASSWORD
+      - WEBDAV_TARGET
+    deps:
+    - compile
+    cmds:
+    - cmd: >-
+        poetry run
+        python build/package_list_builder/main.pyc
+        {{.WEBDAV_URL}}
+        {{.WEBDAV_USER}}
+        {{.WEBDAV_PASSWORD}}
+        {{.WEBDAV_TARGET}}
+    - cmd: >-
+        poetry run
+        dumb-pypi
+        --package-list build/packages.txt
+        --packages-url $WEBDAV_URL
+        --output-dir site

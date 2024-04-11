@@ -1,0 +1,25 @@
+version: 2
+
+updates:
+- package-ecosystem: "pip"
+  directory: "/"
+  schedule:
+    interval: "daily"
+  commit-message:
+    prefix: "⬆️ "
+  assignees:
+    - "dependabot[bot]"
+  reviewers:
+    - "mahtaran"
+  versioning-strategy: "increase"
+
+- package-ecosystem: "github-actions"
+  directory: ".github/workflows/"
+  schedule:
+    interval: "daily"
+  commit-message:
+    prefix: "⬆️ "
+  assignees:
+    - "dependabot[bot]"
+  reviewers:
+    - "mahtaran"

@@ -1,0 +1,24 @@
+# Based on https://github.com/github/gitignore
+
+# Python
+## Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+## C extensions
+*.so
+
+## Caches
+.mypy_cache/
+
+## Virtual environments
+.venv/
+
+# Secrets
+.env
+
+# Build files
+build/
+download/
+site/
