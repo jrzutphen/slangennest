@@ -56,11 +56,11 @@ jobs:
       id: download
       env:
         GH_TOKEN: ${{ secrets.MKDOCS_TOKEN }}
-        OUTPUT_FILE: ${{ env.DOWNLOAD_PREFIX }}-${{ steps.fetch-latest.outputs.version }}.tar.gz
+        OUTPUT_FILE: ${{ env.DOWNLOAD_PREFIX }}-${{ needs.get-latest-version.outputs.version }}.tar.gz
       shell: bash
       run: |
+        gh release download --repo "squidfunk/mkdocs-material-insiders" --archive "tar.gz" --output "${{ env.OUTPUT_FILE }}"
         echo "file=${{ env.OUTPUT_FILE }}" >> $GITHUB_OUTPUT
-        gh release download --repo "squidfunk/mkdocs-material-insiders" --archive "tar.gz" --output "${{ env.DOWNLOAD_PREFIX }}-${{ steps.fetch-latest.outputs.version }}.tar.gz"
     - name: Upload latest version using SCP
       uses: appleboy/scp-action@v0.1.7
       with:
