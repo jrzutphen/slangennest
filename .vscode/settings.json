@@ -1,8 +1,8 @@
 {
     "sonarlint.connectedMode.project": {
-        "connectionId": "Jongerenraad Zutphen",
-        "projectKey": "jrzutphen_slangennest"
-    },
+		"connectionId": "Jongerenraad Zutphen",
+		"projectKey": "jrzutphen_slangennest"
+	},
 	"evenBetterToml.schema.links": true,
 	"evenBetterToml.schema.enabled": true,
 	"yaml.customTags": [
