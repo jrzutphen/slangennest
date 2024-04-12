@@ -28,7 +28,9 @@ jobs:
       id: fetch-latest
       shell: bash
       run: |
-        gh release view --repo "squidfunk/mkdocs-material-insiders" --json "tagName" --jq ".tagName" > ${{ env.VERSION_FILE }}
+        gh release view --repo "squidfunk/mkdocs-material-insiders" \
+          --json "tagName" --jq ".tagName" | 
+          tr -d '"' | sed 's/-insiders/+insiders/' > ${{ env.VERSION_FILE }}
         echo "version=$(cat ${{ env.VERSION_FILE }})" >> $GITHUB_OUTPUT
     - name: Check for modified files
       id: check
