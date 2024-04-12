@@ -70,7 +70,7 @@ jobs:
         SSHPASS: ${{ secrets.SCP_PASSWORD }}
       run: >-
         sshpass -e scp
-        -P ${{ secrets.SCP_PORT }}
+        -P ${{ vars.SCP_PORT }}
         -o StrictHostKeyChecking=no
         ${{ steps.download.outputs.file }}
-        ${{ secrets.SCP_USER }}@${{ secrets.SCP_HOST }}:${{ secrets.SCP_TARGET }}
+        ${{ vars.SCP_USER }}@${{ vars.SCP_HOST }}:${{ vars.SCP_TARGET }}
