@@ -48,6 +48,7 @@ jobs:
       version: ${{ steps.fetch-latest.outputs.version }}
       is_new: ${{ steps.check.outputs.modified }}
   upload-latest-version:
+    environment: production
     runs-on: ubuntu-latest
     needs: get-latest-version
     if: needs.get-latest-version.outputs.is_new == 'true'
