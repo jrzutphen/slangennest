@@ -115,5 +115,5 @@ jobs:
         sshpass -e scp
         -P ${{ vars.SCP_PORT }}
         -o StrictHostKeyChecking=no
-        site/*
+        -r site/*
         ${{ vars.SCP_USER }}@${{ vars.SCP_HOST }}:${{ vars.SCP_TARGET }}
