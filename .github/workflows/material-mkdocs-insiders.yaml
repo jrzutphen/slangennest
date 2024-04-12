@@ -5,6 +5,9 @@ on:
     - cron: '0 0 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 env:
   VERSION_FILE: version/mkdocs-material-insiders.txt
   # The version already includes the 'insiders' suffix
@@ -16,7 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.repository.fork == false
     steps:
-    - uses: actions/checkout@v4
+    - name: Check-out repository
+      uses: actions/checkout@v4
     - name: Fetch latest release version
       env:
         GH_TOKEN: ${{ secrets.MKDOCS_TOKEN }}
