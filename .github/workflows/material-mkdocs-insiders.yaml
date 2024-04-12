@@ -53,6 +53,9 @@ jobs:
     needs: get-latest-version
     if: needs.get-latest-version.outputs.is_new == 'true'
     steps:
+    - name: Install dependencies
+      run: |
+        sudo apt install -y sshpass
     - name: Download latest version
       id: download
       env:
@@ -63,11 +66,11 @@ jobs:
         gh release download --repo "squidfunk/mkdocs-material-insiders" --archive "tar.gz" --output "${{ env.OUTPUT_FILE }}"
         echo "file=${{ env.OUTPUT_FILE }}" >> $GITHUB_OUTPUT
     - name: Upload latest version using SCP
-      uses: appleboy/scp-action@v0.1.7
-      with:
-        host: ${{ vars.SCP_HOST }}
-        username: ${{ vars.SCP_USER }}
-        password: ${{ secrets.SCP_PASSWORD }}
-        port: ${{ vars.SCP_PORT }}
-        source: ${{ steps.download.outputs.file }}
-        target: ${{ vars.SCP_TARGET }}
+      env:
+        SSHPASS: ${{ secrets.SCP_PASSWORD }}
+      run: >-
+        sshpass -e scp
+        -P ${{ secrets.SCP_PORT }}
+        -o StrictHostKeyChecking=no
+        ${{ steps.download.outputs.file }}
+        ${{ secrets.SCP_USER }}@${{ secrets.SCP_HOST }}:${{ secrets.SCP_TARGET }}
