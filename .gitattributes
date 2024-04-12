@@ -20,6 +20,7 @@ poetry.lock					  text
 # Documents
 ## Plain text
 *.md                          text
+*.txt                         text
 
 # Media
 ## Audio
